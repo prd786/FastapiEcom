@@ -1,7 +1,21 @@
 from fastapi import FastAPI, HTTPException
 from services.product import Product, products
+from services.pydbconn import init_db
+from contextlib import asynccontextmanager
 
 app = FastAPI()
+
+# @app.on_event("startup")
+# def on_startup():
+#     init_db()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Starting app")
+    yield
+    print("Shutting down app")
+
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def read_root():
@@ -32,7 +46,6 @@ def create_product(product: Product):
 # @app.get("/products")
 # def get_products():
 #     return products
-
 
 
 
